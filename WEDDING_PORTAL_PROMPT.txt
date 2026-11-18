@@ -1,0 +1,320 @@
+================================================================================
+MASTER APPLICATION PROMPT & TECHNICAL SPECIFICATION
+PROJECT: Wedding Invitation Portal (Full-Stack Real-Time Celebration Platform)
+================================================================================
+
+1. HIGH-LEVEL OBJECTIVE & TECH STACK
+--------------------------------------------------------------------------------
+Build a full-stack, self-hostable Wedding Invitation & Celebration Management
+Portal with two cleanly separated experiences:
+
+  A. Guest Invitation View (default route, or ?invite=1, ?invite=2, ?invite=3,
+     or custom slug):
+     A clean, uncluttered, real-time synced invitation experience tailored to the
+     specific events assigned to that link.
+
+  B. Host / Admin Dashboard (?admin=true):
+     A password-protected management studio controlling themes, 3D entrance
+     animations, fonts/scripts, events, link-scoped invitations, WhatsApp and
+     OpenGraph share cards, RSVPs, music, photos/albums, and server activity
+     logs.
+
+Technology Stack:
+  - Frontend: React 19, TypeScript, Vite 6, Tailwind CSS v4 (@tailwindcss/vite),
+    lucide-react, canvas-confetti, motion
+  - Backend: Node.js + Express 4 (server.ts)
+  - Database: Embedded SQLite via better-sqlite3 (server/db.ts) stored at
+    data/wedding_portal.sqlite with automatic JSON backups
+    (data/wedding_database.json and data/wedding-project.json)
+  - Real-Time Sync: Server-Sent Events (/api/project/stream) + SSR HTML initial
+    state injection (window.__INITIAL_WEDDING_PROJECT__) + 2-second background
+    polling + focus/visibilitychange resync
+  - Deployment: Multi-stage Docker (node:22-bookworm-slim), docker-compose.yml,
+    Nginx SSE-aware reverse proxy (nginx.conf), and healthcheck.cjs
+
+
+2. COMPLETE FEATURE SPECIFICATION
+--------------------------------------------------------------------------------
+
+2.1 Multi-Link Event Filtering (LinkManager & resolveLinkFromUrl)
+  - Support dedicated link types:
+      * ?invite=1 (wedding_only): Displays only Wedding Ceremony events,
+        tailored hero subtitle, event-specific date, and countdown.
+      * ?invite=2 (reception_only): Displays only Reception / Walima events with
+        isolated date and countdown.
+      * ?invite=3 (wedding_reception): Displays all assigned celebration events,
+        smart multi-day date formatting (e.g., "October 10 & 11, 2026"), and
+        automatically targets the next upcoming event in the countdown.
+      * Custom VIP links (vip-family-*): Supports recipient names, per-link max
+        guest caps, and custom OpenGraph share previews.
+  - Query (?invite=, ?link=, ?code=) and path aliases (wedding-only,
+    reception-only, wedding-reception, ceremony, reception, full, all) resolve
+    deterministically to an InvitationLink.
+
+2.2 44 Aesthetic Themes & Dynamic Contrast Engine (themes.ts & colorUtils.ts)
+  - Curate 44 themes across 12 categories:
+    classic, romantic, bohemian, modern, moody, floral, regal, vintage,
+    destination, minimalist, festive, door-opening.
+  - Admin filter tabs for: Royal Door Opening, Scratch to Reveal Date, Live
+    Flying Birds, Hindu Traditions, Muslim Traditions, and Live Falling Petals.
+  - Dark-Theme Contrast Engine (colorUtils.ts):
+    Computes luminance across hex, rgb(), and CSS linear-gradient(...) values
+    (isColorDark, isThemeOrBackgroundDark) and automatically resolves
+    high-contrast timingColor, addressColor, headingColor, and labelMutedColor
+    so dark/noir themes never produce unreadable dark text on dark cards.
+
+2.3 Interactive Entrance, Canvas & Audio Engines
+  A. 3D Entrance Experiences (RoyalDoorOpening.tsx) - 14 styles across 3 stages:
+     - Haveli / Temple / Archway Doors:
+       Layered 3D perspective(1400px) swinging door leaves (rotateY +-96deg),
+       foreground clay diya flicker overlay (/assets/themes/jharokha/fore.webp,
+       closed.webp, open.webp), golden center seam glow, and custom arch and
+       knocker configs (rajput-haveli, south-temple-brass, shekhawati-jharokha,
+       vedic-sandalwood, rajbari-terracotta, mughal-jali,
+       andalusian-mashrabiya, kashmiri-walnut, nawabi-emerald-velvet,
+       swarna-sun-crest, shahi-teakwood-haveli).
+     - Wax-Sealed Envelopes (ivory-wax-envelope, zardozi-velvet-envelope):
+       3D rotateX(180deg) top flap flip, clickable glowing monogram wax seal
+       (Partner1 & Partner2 initials), and sliding inner invitation card.
+     - Velvet Curtains (parda-velvet-curtains):
+       Multi-tier crystal chandelier with pelmet scalloping, pleated velvet
+       curtain panels parting (translateX +-85% scaleX 0.4), and central golden
+       crest.
+     - Includes Web Audio API entrance harp chime, mute toggle, "Skip to
+       Invitation", and a persistent bottom-left "Re-open Royal Doors" replay
+       button.
+
+  B. Scratch-to-Reveal Save-the-Date (ScratchToRevealDate.tsx):
+     - HTML5 <canvas> painted with metallic gold gradient, micro-glitter dots,
+       and 3 sub-cards (DAY, MONTH, YEAR) layered over the resolved event date,
+       time, and venue.
+     - destination-out erasing with sparkle dust flyaway particles, throttled
+       32x32 pixel alpha sampling (150ms), auto-reveal at >= 40% scratched,
+       ascending pentatonic Web Audio chime, Google Calendar export button, and
+       Reset button.
+
+  C. Live Particle & Flock Canvases (ThemeParticles, LiveFallingPetals,
+     LiveBirdsFlying):
+     - Canvas falling petals/particles: rose petals, marigold florets (genda
+       phool), lilac petals & butterflies, botanical leaves, champagne bubbles,
+       snowflakes, and golden sparkles.
+     - Canvas flying bird flocks: white-doves (with olive sprig),
+       royal-parrots, golden-cranes, and golden-sparrows with natural wing-flap
+       plus glide cycles and click/tap flutter triggers.
+
+  D. Hybrid Audio Player (AudioPlayer.tsx):
+     - Automatically detects and plays YouTube URLs / 11-char IDs (via YouTube
+       Iframe API), Dropbox share URLs (?dl=0 -> ?dl=1), Google Drive file links
+       (uc?export=download), direct MP3/audio streams, or falls back to a
+       procedural Web Audio API Canon-in-D chord arpeggiator when no URL is set.
+
+2.4 Post-Event / Date-Passed Behavior (CountdownTimer & GuestInvitationView)
+  - Before an event: Renders a live 4-column Days / Hours / Minutes / Seconds
+    countdown targeting the link's next upcoming event timestamp.
+  - After the date/time passes (difference <= 0): Replaces the countdown grid
+    with a celebratory banner: "Happily Celebrated ✨ Today and forever".
+  - For multi-event links where Event 1 has passed but Event 2 is still ahead,
+    GuestInvitationView automatically advances the countdown target to the next
+    upcoming event.
+
+2.5 Multilingual & Typography Studio (FontLanguageStudio.tsx & fontOptions.ts)
+  - Dedicated script tabs for:
+      * English & Latin
+      * Urdu (RTL, Noto Nastaliq Urdu, Gulzar, Amiri)
+      * Hindi (Devanagari: Rozha One, Yatra One, Noto Serif Devanagari)
+      * Arabic (RTL, Amiri, Aref Ruqaa, Cairo)
+      * Custom Google Fonts & external stylesheet CSS URLs
+  - Dynamically injects <link> tags into <head> for both admin preview and
+    guest views, and applies dir="rtl" cleanly for RTL scripts.
+  - Includes cultural invocation presets (e.g., Bismillah, Shri Ganeshaya
+    Namah).
+
+2.6 Events, RSVPs, Wishes & Gift Registry
+  - 17 Event Categories (nikah, walima, mayun, haldi, mehndi, sangeet, baraat,
+    pheras, ceremony, reception, dinner, cocktail, party, cultural, brunch,
+    welcome, custom) with editable badges/icons, dress codes, indoor/outdoor
+    tags, parking notes, schedule highlights, Google Maps links, Add to Google
+    Calendar URLs, and downloadable .ics calendar files.
+  - RSVP System (RsvpModal.tsx, RsvpManager.tsx): Admin toggles (showRsvp,
+    maxGuestsPerRsvp 1-15), confetti burst on submit, multi-event checkboxes,
+    dietary notes, song requests, one-click WhatsApp RSVP message export,
+    filtering/search, and CSV export.
+  - Gift Registry & Blessings (GiftRegistrySection.tsx): Independent toggles
+    (showGiftRegistry, showWishes); guestbook submissions persist directly into
+    SQLite rsvps and broadcast live.
+
+2.7 Photo Gallery & Album Management with Strict RBAC (PhotoGallerySection.tsx)
+  - Visibility & Upload Controls:
+      * showPhotosSection toggles the entire Photos & Albums section on/off for
+        guests.
+      * allowGuestPhotoUploads toggles whether guests see upload controls (403
+        enforced on POST /api/photos/upload if disabled for guest uploaders).
+  - Role-Based Album Rules:
+      * Guests CANNOT create, rename, or delete albums (enforced in UI via
+        canCreateAlbum = isAdmin and on backend POST /api/photos/album returning
+        403 if createdBy === 'guest').
+      * Admin has a dedicated Photos & Albums tab with Gallery view and Album
+        Manager view (showing photo counts per album, create, rename/edit,
+        delete, lightbox, photo deletion, and automatic cover photo assignment).
+  - Single-Core + Last-Album Protection:
+      * Only ONE core album (album-wedding) is permanently protected
+        (isAlbumProtected + 403 on DELETE /api/photos/album/album-wedding).
+      * All other albums—including pre-created albums (album-prewedding,
+        album-haldi, album-sangeet, album-candids) and custom albums—CAN be
+        deleted by the admin.
+      * Minimum 1 Album Guard: If only 1 album remains (albums.length <= 1),
+        deletion is blocked (400 on backend + UI lock badge) so the portal
+        always has at least one album.
+      * Safe Photo Migration: Deleting any album automatically reassigns all of
+        its photos to album-wedding (or the remaining fallback album) so no
+        photos are lost or orphaned.
+
+2.8 WhatsApp & Social Share Preview Studio (SocialSharePreviewStudio.tsx)
+  - Live interactive WhatsApp link-card preview with per-link overrides (title,
+    cardSnippet, description, customDomain, imageUrl) and one-click "Auto-fill
+    from Assigned Event".
+  - Deterministic SVG QR code modal and one-click WhatsApp/Email share message
+    builder (QRCodeModal.tsx).
+
+
+3. PAIN POINTS, REAL-WORLD PROBLEMS & ERROR EDGE CASES SOLVED
+--------------------------------------------------------------------------------
+
+[1] WhatsApp / Social Crawlers Ignore Client-Side React SPAs
+    Problem: WhatsApp, Facebook, Telegram, and Twitter crawlers do not execute
+    client-side JS, causing generic titles/images or wrong event details.
+    Solution: Express middleware in server.ts (injectSeoAndSocialTags)
+    intercepts HTML requests for crawlers and browsers, strips default
+    <title>/og:*/twitter:* tags, and injects dynamic OpenGraph, Twitter Card,
+    Schema.org Event JSON-LD, and window.__INITIAL_WEDDING_PROJECT__ directly
+    from SQLite.
+
+[2] Cross-Link Metadata Leakage (Link 1 showing Link 2's preview)
+    Problem: Different invitation links (?invite=1 vs ?invite=2 vs ?invite=3)
+    accidentally sharing or overwriting each other's preview metadata.
+    Solution: resolveLinkFromUrl() and getEffectiveShareMetadata() isolate
+    metadata strictly per InvitationLink and compute event-accurate defaults
+    from that link's assigned events when custom fields are empty.
+
+[3] WhatsApp Failing to Render Base64 og:image Data URIs
+    Problem: Uploaded images stored only as base64 data:image/... URIs are
+    rejected by WhatsApp link preview crawlers.
+    Solution: POST /api/upload-share-image and saveProjectToDB() write uploaded
+    base64 images as physical files under both public/uploads/ and
+    dist/uploads/, and og:image points to /api/share-image.jpg?link=...&v=N
+    serving binary bytes with explicit Content-Type, Content-Length, CORS *,
+    and version cache-busting.
+
+[4] Recursive Image onError Infinite Loops
+    Problem: Broken custom image URLs trigger infinite reload loops in preview
+    cards.
+    Solution: Clear e.currentTarget.onerror = null inside handleImageError
+    before applying the fallback /tabish_iram_card.jpg path.
+
+[5] Multi-Device / Multi-Browser Stale Cache (localStorage Traps)
+    Problem: Relying on localStorage caused second devices or guests to see old
+    couple names, themes, or schedules after admin edits.
+    Solution: Purge legacy localStorage keys on boot, enforce
+    Cache-Control: no-store, no-cache, must-revalidate on /api/* and HTML
+    responses, embed live state in __INITIAL_WEDDING_PROJECT__, and sync live
+    via SSE (/api/project/stream) + focus/visibilitychange + 2s polling.
+
+[6] Event Date Drift Between formattedDate and ISO date
+    Problem: Hosts editing display dates (e.g., "Saturday, October 13, 2026")
+    left ISO event.date stale, causing wrong countdowns and calendar exports.
+    Solution: resolveEventDate(), getProjectFromDB(), and saveProjectToDB()
+    parse formattedDate and synchronize canonical YYYY-MM-DD automatically.
+
+[7] Invalid Calendar Times (endTime missing or <= startTime)
+    Problem: 12-hour strings ("3:30 PM", "12:00 AM"), missing endTime, or end
+    times earlier than start time caused broken Google Calendar / .ics exports.
+    Solution: parseTimeString() normalizes 12h/24h formats and clamps endTime
+    to startTime + 2 hours whenever missing or invalid.
+
+[8] Mobile Touch Scrolling While Scratching Gold Foil
+    Problem: Swiping a finger across the Scratch-to-Reveal canvas scrolled the
+    page instead of scratching, or HiDPI scaling misaligned coordinates.
+    Solution: Set touchAction: 'none' (touch-none) on the <canvas>, bind both
+    Mouse and Touch events, and throttle 32x32 alpha sampling to 150ms.
+
+[9] Browser Audio Autoplay Blocking & Cloud Link Formatting
+    Problem: Browsers block autoplay before interaction, and raw Dropbox /
+    Google Drive share links return HTML web pages instead of audio files.
+    Solution: resolveAudioSource() transforms Dropbox (?dl=1) and Google Drive
+    (uc?export=download) URLs, unlocks AudioContext on first user gesture, and
+    degrades cleanly to the procedural Web Audio synthesizer when needed.
+
+[10] Dev vs Production Static & Upload Path Desync
+    Problem: Images uploaded during runtime saved only to public/uploads/ could
+    404 in production serving from dist/, or missing asset URLs returned SPA
+    HTML instead of 404.
+    Solution: Write uploaded files to both public/uploads/ and dist/uploads/,
+    probe multi-path fallbacks on /uploads/*, and return HTTP 404 in production
+    for missing file extensions (.js, .css, .png, etc.).
+
+[11] SQLite Failures in Docker / Portainer / NFS Volumes
+    Problem:
+      - better-sqlite3 native bindings fail on Alpine Linux (musl libc).
+      - SQLite WAL mode throws SQLITE_IOERR on NFS/CIFS network mounts.
+      - Wrapper shell entrypoints fail due to CRLF or missing execute bits.
+      - Hardcoded ports or missing healthchecks break container orchestration.
+    Solution:
+      - Two-stage Dockerfile on node:22-bookworm-slim (glibc) with python3,
+        make, g++, sqlite3 build toolchain.
+      - Wrap pragma('journal_mode = WAL') in try/catch with automatic fallback
+        to journal_mode = DELETE + busy_timeout = 5000.
+      - Direct CMD ["node", "dist/server.cjs"] with no shell wrapper.
+      - Single PORT environment variable honored across server.ts, Dockerfile,
+        docker-compose.yml, and healthcheck.cjs (3.5s HTTP timeout check).
+
+[12] Nginx Buffering Breaking Real-Time SSE
+    Problem: Reverse proxies buffer /api/project/stream responses, delaying or
+    dropping live updates.
+    Solution: nginx.conf configures location /api/project/stream with
+    proxy_buffering off, proxy_cache off, chunked_transfer_encoding off,
+    proxy_read_timeout 86400s, paired with X-Accel-Buffering: no and 20-second
+    ": ping" heartbeats from Express.
+
+[13] TypeScript Strictness & Payload Edge Cases
+    Problem: Array.from(e.target.files) inferred as unknown[] (TS2345), invalid
+    activity log category literals, base64 payload 413 rejections, and </script>
+    XSS breakouts inside SSR JSON injection.
+    Solution: Cast Array.from(e.target.files) as File[], restrict logActivity
+    categories strictly to 'DATA_SAVE' | 'GUEST_OPEN' | 'RSVP' | 'AUTH' |
+    'SYSTEM', set express.json({ limit: '10mb' }), and escape '<' as '\u003c'
+    in SSR JSON injection.
+
+
+4. DATABASE SCHEMA & API CONTRACT REFERENCE
+--------------------------------------------------------------------------------
+
+SQLite Tables (server/db.ts):
+  - project_state (id TEXT PK, project_json TEXT, version INT, updated_at TEXT)
+  - admin_auth (id TEXT PK, username TEXT, password TEXT, password_hint TEXT,
+    show_hint INT, updated_at TEXT)
+  - rsvps (id TEXT PK, link_code TEXT, guest_name TEXT, email TEXT, phone TEXT,
+    status TEXT, guest_count INT, data_json TEXT, submitted_at TEXT)
+  - link_views (link_code TEXT PK, views_count INT, updated_at TEXT)
+  - activity_logs (id TEXT PK, category TEXT, title TEXT, details TEXT, ip TEXT,
+    created_at TEXT)  [pruned to latest 200 entries]
+
+Express API Endpoints (server.ts):
+  - GET  /health, GET /api/health
+  - GET  /api/project/stream           (SSE live sync stream)
+  - GET  /api/project                  (Authoritative DB snapshot)
+  - POST /api/project                  (Transactional save + JSON backup + SSE)
+  - POST /api/project/reset            (Reset DB to defaults)
+  - POST /api/project/rsvp             (Insert RSVP + broadcast SSE)
+  - POST /api/project/views            (Increment link visit counter + log)
+  - GET  /api/logs                     (Fetch recent server activity logs)
+  - GET  /api/auth/creds               (Read admin credentials config)
+  - POST /api/auth/creds               (Update admin credentials & hint)
+  - POST /api/upload-share-image       (Save base64 share image to disk & DB)
+  - GET  /api/share-image(.jpg|.png)   (Binary image endpoint for crawlers)
+  - POST /api/photos/upload            (Upload photo with guest upload RBAC)
+  - POST /api/photos/album             (Create/rename album; Admin only, 403 guest)
+  - DELETE /api/photos/album/:albumId  (Delete album; protects album-wedding &
+                                        last remaining album; migrates photos)
+  - DELETE /api/photos/:photoId        (Delete photo)
+  - POST /api/photos/:photoId/like     (Increment photo likes)
+================================================================================

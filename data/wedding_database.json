@@ -1,0 +1,297 @@
+{
+  "version": 18,
+  "lastUpdated": "2026-11-09T15:59:09.591Z",
+  "project": {
+    "id": "wedding-iram-tabish",
+    "couple": {
+      "partner1": "Ayesha",
+      "partner2": "Bilal",
+      "fullName1": "Iram1",
+      "fullName2": "Tabish",
+      "formattedTitle": "Ayesha & Bilal"
+    },
+    "announcementTitle": "Together with their families",
+    "tagline": "Request the honor of your presence as they exchange vows and celebrate their union",
+    "loveStory": "Six years of adventures, shared laughter, and quiet Sunday mornings have brought us here. We cannot wait to celebrate the beginning of our forever with the people who mean the world to us.",
+    "weddingDate": "2026-10-24T15:30:00",
+    "weddingDateFormatted": "Saturday, October 24, 2026",
+    "rsvpDeadlineFormatted": "September 20, 2026",
+    "coverImage": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1600&q=80",
+    "selectedThemeId": "gothic-noir-romance",
+    "typography": {
+      "languageScript": "english",
+      "headingFont": "'Playfair Display', Georgia, serif",
+      "scriptFont": "'Great Vibes', cursive",
+      "bodyFont": "'Plus Jakarta Sans', sans-serif",
+      "auspiciousInvocation": "Together with their families",
+      "isRTL": false
+    },
+    "audioTrack": {
+      "enabled": true,
+      "title": "Canon in D - Acoustic Romance",
+      "artist": "Johann Pachelbel (Acoustic Arr.)",
+      "url": "https://actions.google.com/sounds/v1/water/rain_heavy.ogg"
+    },
+    "contact": {
+      "email": "celebrate@iram-tabish-wedding.com",
+      "phone": "+1 (555) 234-5678",
+      "weddingHashtag": "#IramAndTabish2026"
+    },
+    "giftRegistryUrl": "https://www.zola.com/registry/sample",
+    "events": [
+      {
+        "id": "event-wedding",
+        "type": "wedding",
+        "category": "ceremony",
+        "name": "Sacred Wedding Ceremony",
+        "subtitle": "Exchange of vows, rings, and marriage blessing",
+        "date": "2026-10-24",
+        "formattedDate": "Saturday, October 24, 2026",
+        "time": "3:30 PM",
+        "endTime": "4:45 PM",
+        "venue": {
+          "name": "St. Claire Vineyard Chapel",
+          "address": "1420 Lakeview Crest Road",
+          "cityStateZip": "Napa Valley, CA 94558",
+          "mapsUrl": "https://maps.google.com/?q=St+Claire+Vineyard+Chapel+Napa+Valley",
+          "parkingInfo": "Valet parking available at the main chapel entrance.",
+          "indoorOutdoor": "both",
+          "venuePhone": "+1 (707) 555-0199"
+        },
+        "dressCode": "Formal Black Tie Optional",
+        "description": "Guests are kindly requested to be seated by 3:15 PM.",
+        "scheduleHighlights": [
+          "3:15 PM - Guest Seating & Prelude Quartet",
+          "3:30 PM - Processional & Nuptial Ceremony",
+          "4:30 PM - Grand Recessional & Rose Petal Sendoff"
+        ],
+        "order": 1
+      },
+      {
+        "id": "event-reception",
+        "type": "reception",
+        "category": "reception",
+        "name": "Evening Dinner & Reception Gala",
+        "subtitle": "Cocktails, multi-course dining, heartfelt toasts & midnight dancing",
+        "date": "2026-10-24",
+        "formattedDate": "Saturday, October 24, 2026",
+        "time": "6:00 PM",
+        "endTime": "11:30 PM",
+        "venue": {
+          "name": "The Grand Chandelier Estate Pavilion",
+          "address": "880 Heritage Oak Way",
+          "cityStateZip": "Napa Valley, CA 94558",
+          "mapsUrl": "https://maps.google.com/?q=Estate+Bellezza+Napa+Valley",
+          "parkingInfo": "Complimentary on-site guest parking.",
+          "indoorOutdoor": "indoor",
+          "venuePhone": "+1 (707) 555-0188"
+        },
+        "dressCode": "Black Tie Optional / Glamorous Evening Attire",
+        "description": "Join us for cocktails followed by dinner and dancing.",
+        "scheduleHighlights": [
+          "6:00 PM - Champagne Cocktail Hour",
+          "7:15 PM - Grand Entrance & Welcome Toasts",
+          "7:45 PM - Dinner Service",
+          "9:00 PM - First Dance",
+          "11:15 PM - Sparkler Farewell"
+        ],
+        "order": 2
+      }
+    ],
+    "invitationLinks": [
+      {
+        "id": "link-1",
+        "code": "1",
+        "type": "wedding_only",
+        "title": "Wedding Ceremony Only (Link 1)",
+        "description": "Exclusive invitation link displaying only the Wedding Ceremony.",
+        "eventIds": [
+          "event-wedding"
+        ],
+        "recipientName": "Honored Guest",
+        "maxGuests": 2,
+        "viewsCount": 0,
+        "createdAt": "2026-08-15T10:00:00Z",
+        "badgeColor": "bg-amber-100 text-amber-900 border-amber-300",
+        "sharePreview": {
+          "title": "Wedding Ceremony & Nikah of Iram & Tabish | 10th Oct",
+          "description": "Inviting you and your family to our sacred wedding ceremony to be held on 10th October at Nayar Bhavan from 6:00 PM onwards.",
+          "cardSnippet": "Nikah Ceremony at Nayar Bhavan",
+          "imageUrl": "/tabish_iram_card.jpg",
+          "customDomain": "wed.tabish.in"
+        }
+      },
+      {
+        "id": "link-2",
+        "code": "2",
+        "type": "reception_only",
+        "title": "Reception Gala Only (Link 2)",
+        "description": "Exclusive invitation link displaying only the Evening Dinner & Reception.",
+        "eventIds": [
+          "event-reception"
+        ],
+        "recipientName": "Reception Guest",
+        "maxGuests": 2,
+        "viewsCount": 0,
+        "createdAt": "2026-08-15T10:05:00Z",
+        "badgeColor": "bg-purple-100 text-purple-900 border-purple-300",
+        "sharePreview": {
+          "title": "Wedding Reception of Iram & Tabish | 11th Oct",
+          "description": "Inviting you and your family to our wedding reception to be held on 11th October at Jogale Banquet from 6:00 PM onwards.",
+          "cardSnippet": "Reception Gala at Jogale Banquet",
+          "imageUrl": "/tabish_iram_card.jpg",
+          "customDomain": "wed.tabish.in"
+        }
+      },
+      {
+        "id": "link-3",
+        "code": "3",
+        "type": "wedding_reception",
+        "title": "Wedding + Reception (Link 3)",
+        "description": "Comprehensive invitation link displaying both Wedding Ceremony and Reception.",
+        "eventIds": [
+          "event-wedding",
+          "event-reception"
+        ],
+        "recipientName": "Close Friends & Family",
+        "maxGuests": 4,
+        "viewsCount": 12,
+        "createdAt": "2026-08-15T10:10:00Z",
+        "badgeColor": "bg-emerald-100 text-emerald-900 border-emerald-300",
+        "sharePreview": {
+          "title": "Wedding & Reception of Ayesha & Bilal | 10th & 11th Oct",
+          "description": "With the divine grace of the almighty, inviting you and your family to celebrate the wedding ceremonies of Ayesha & Bilal: Sacred Wedding Ceremony (24th Oct at St. Claire Vineyard Chapel) & Evening Dinner & Reception Gala (24th Oct at The Grand Chandelier Estate Pavilion).",
+          "cardSnippet": "Wedding Ceremony & Reception Celebrations of Ayesha & Bilal",
+          "imageUrl": "/tabish_iram_card.jpg",
+          "customDomain": "wed.tabish.in"
+        }
+      }
+    ],
+    "rsvps": [],
+    "updatedAt": "2026-11-09T15:59:09.591Z",
+    "version": 18,
+    "sharePreview": {
+      "title": "Wedding Invitation of Iram & Tabish | 10th Oct",
+      "description": "With the divine grace of the almighty, inviting you and your family to our wedding to be held on 11th October at Jogale Banquet from 6:00 PM onwards.",
+      "cardSnippet": "",
+      "imageUrl": "/tabish_iram_card.jpg",
+      "customDomain": "wed.tabish.in"
+    },
+    "albums": [
+      {
+        "id": "album-prewedding",
+        "title": "Pre-Wedding Shoot",
+        "description": "Dusk silhouettes, lake views, and laughter before the festivities begin",
+        "coverPhotoUrl": "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=800&q=80",
+        "createdAt": "2026-08-10T10:00:00Z",
+        "order": 1,
+        "createdBy": "couple"
+      },
+      {
+        "id": "album-haldi",
+        "title": "Haldi & Mehndi Glow",
+        "description": "Vibrant marigold showers, herbal ubtan, and intricate henna artistry",
+        "coverPhotoUrl": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=800&q=80",
+        "createdAt": "2026-08-12T12:00:00Z",
+        "order": 2,
+        "createdBy": "couple"
+      },
+      {
+        "id": "album-sangeet",
+        "title": "Sangeet & Dance Night",
+        "description": "Dhol beats, family dance performances, and midnight celebrations",
+        "coverPhotoUrl": "https://images.unsplash.com/photo-1545232979-fbf6c6fb1e68?auto=format&fit=crop&w=800&q=80",
+        "createdAt": "2026-08-14T15:00:00Z",
+        "order": 3,
+        "createdBy": "couple"
+      },
+      {
+        "id": "album-wedding",
+        "title": "Sacred Vivah & Pheras",
+        "description": "Vows, sacred fire pheras, sindoor ritual, and eternal union",
+        "coverPhotoUrl": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=800&q=80",
+        "createdAt": "2026-08-16T18:00:00Z",
+        "order": 4,
+        "createdBy": "couple"
+      }
+    ],
+    "photos": [
+      {
+        "id": "photo-1",
+        "albumId": "album-prewedding",
+        "url": "https://images.unsplash.com/photo-1583939003579-730e3918a45a?auto=format&fit=crop&w=1200&q=80",
+        "caption": "Quiet dusk moments overlooking the heritage courtyard",
+        "uploaderName": "Iram & Tabish",
+        "uploaderType": "couple",
+        "uploadedAt": "2026-08-10T10:15:00Z",
+        "likesCount": 24
+      },
+      {
+        "id": "photo-2",
+        "albumId": "album-prewedding",
+        "url": "https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=1200&q=80",
+        "caption": "Walking towards forever hand in hand",
+        "uploaderName": "Iram & Tabish",
+        "uploaderType": "couple",
+        "uploadedAt": "2026-08-10T10:30:00Z",
+        "likesCount": 18
+      },
+      {
+        "id": "photo-3",
+        "albumId": "album-haldi",
+        "url": "https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&w=1200&q=80",
+        "caption": "Henna cone swirls and auspicious bridal mehndi",
+        "uploaderName": "Amina Khala",
+        "uploaderType": "guest",
+        "uploadedAt": "2026-08-12T14:20:00Z",
+        "likesCount": 31
+      },
+      {
+        "id": "photo-4",
+        "albumId": "album-haldi",
+        "url": "https://images.unsplash.com/photo-1532712938310-34cb3982ef74?auto=format&fit=crop&w=1200&q=80",
+        "caption": "Marigold petal shower for the bride and groom!",
+        "uploaderName": "Farhan & Zoya",
+        "uploaderType": "guest",
+        "uploadedAt": "2026-08-12T15:05:00Z",
+        "likesCount": 42
+      },
+      {
+        "id": "photo-5",
+        "albumId": "album-sangeet",
+        "url": "https://images.unsplash.com/photo-1545232979-fbf6c6fb1e68?auto=format&fit=crop&w=1200&q=80",
+        "caption": "Cousins flashmob on the dance stage",
+        "uploaderName": "Kabir & Friends",
+        "uploaderType": "guest",
+        "uploadedAt": "2026-08-14T21:10:00Z",
+        "likesCount": 37
+      },
+      {
+        "id": "photo-6",
+        "albumId": "album-wedding",
+        "url": "https://images.unsplash.com/photo-1606800052052-a08af7148866?auto=format&fit=crop&w=1200&q=80",
+        "caption": "The golden wedding rings exchange ceremony",
+        "uploaderName": "Iram & Tabish",
+        "uploaderType": "couple",
+        "uploadedAt": "2026-08-16T19:00:00Z",
+        "likesCount": 56
+      },
+      {
+        "id": "photo-7",
+        "albumId": "album-prewedding",
+        "url": "https://images.unsplash.com/photo-1511285560929-80b456fea0bc?auto=format&fit=crop&w=1200&q=80",
+        "caption": "Family portrait with the brightest smiles!",
+        "uploaderName": "Uncle Tariq & Family",
+        "uploaderType": "guest",
+        "uploadedAt": "2026-08-18T22:30:00Z",
+        "likesCount": 29
+      }
+    ],
+    "showPhotosSection": true,
+    "maxGuestsPerRsvp": 3,
+    "showRsvp": true,
+    "showGiftRegistry": true,
+    "showWishes": true,
+    "allowGuestPhotoUploads": false
+  }
+}

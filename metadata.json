@@ -1,0 +1,6 @@
+{
+  "name": "Wedding Invitation Portal",
+  "description": "Customizable wedding invitation management platform with aesthetic pre-built themes, live falling petals simulation, multi-event scheduling (Haldi, Mehndi, Sangeet, Ceremony, Reception), dedicated shareable link types, and Docker support.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

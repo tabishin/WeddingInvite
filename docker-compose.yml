@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  wedding-portal:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        PORT: ${PORT:-3000}
+    container_name: wedding_invitation_portal
+    restart: unless-stopped
+    init: true
+    ports:
+      # Single-place port: Change PORT in .env (e.g. PORT=8080) and this updates automatically
+      - "${PORT:-3000}:${PORT:-3000}"
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - PORT=${PORT:-3000}
+    volumes:
+      - wedding_data:/app/data
+    healthcheck:
+      test: ["CMD", "node", "healthcheck.cjs"]
+      interval: 20s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    networks:
+      - wedding-network
+
+volumes:
+  wedding_data:
+    driver: local
+
+networks:
+  wedding-network:
+    driver: bridge
